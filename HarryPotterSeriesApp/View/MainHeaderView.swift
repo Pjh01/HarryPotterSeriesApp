@@ -42,7 +42,7 @@ class MainHeaderView: UIView {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(40)
-            //$0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
     }
     
