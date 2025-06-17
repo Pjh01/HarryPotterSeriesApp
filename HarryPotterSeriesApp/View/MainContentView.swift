@@ -3,6 +3,8 @@ import UIKit
 import SnapKit
 
 class MainContentView: UIView {
+    
+    let scrollView = UIScrollView()
     let totalStack = UIStackView()
     
     override init(frame: CGRect) {
@@ -16,16 +18,22 @@ class MainContentView: UIView {
     }
     
     private func setupUI() {
-        addSubview(totalStack)
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.addSubview(totalStack)
+        
+        addSubview(scrollView)
         totalStack.axis = .vertical
         totalStack.spacing = 24
     }
     
     private func setupConstraints() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         totalStack.snp.makeConstraints {
-            //$0.top.equalToSuperview().offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            //$0.bottom.equalToSuperview().offset(-20)
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
         }
     }
     
@@ -35,7 +43,8 @@ class MainContentView: UIView {
         let stacks: [UIStackView] = [
             makeImageAndInfoStack(book: book, seriesNumber: seriesNumber),
             makeSummaryStack(title: "Dedication", value: book.dedication),
-            makeSummaryStack(title: "Summary", value: book.summary, seriesNumber: seriesNumber)
+            makeSummaryStack(title: "Summary", value: book.summary, seriesNumber: seriesNumber),
+            makeChapterStack(title: "Chapter", value: book.chapters)
         ]
         stacks.forEach { totalStack.addArrangedSubview($0) }
     }

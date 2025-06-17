@@ -24,7 +24,8 @@ class MainView: UIView {
         
         contentView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom).offset(10)
-            $0.leading.trailing.bottom.equalTo(safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
         }
     }
     

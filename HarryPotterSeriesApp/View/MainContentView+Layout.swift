@@ -82,5 +82,30 @@ extension MainContentView {
         stack.spacing = 8
         return stack
     }
+    
+    func makeChapterStack(title: String, value: [Chapter]) -> UIStackView {
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.textColor = .black
+
+        let chapterLabels = value.map { chapter -> UILabel in
+            let label = UILabel()
+            label.text = chapter.title
+            label.font = .systemFont(ofSize: 14)
+            label.textColor = .darkGray
+            label.numberOfLines = 0
+            return label
+        }
+
+        let chapterStack = UIStackView(arrangedSubviews: chapterLabels)
+        chapterStack.axis = .vertical
+        chapterStack.spacing = 8
+
+        let stack = UIStackView(arrangedSubviews: [titleLabel, chapterStack])
+        stack.axis = .vertical
+        stack.spacing = 8
+        return stack
+    }
 }
 
