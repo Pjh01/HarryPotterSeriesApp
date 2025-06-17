@@ -75,9 +75,33 @@ extension MainContentView {
         valueLabel.textColor = .darkGray
         valueLabel.numberOfLines = 0
         
-        valueLabel.text = value
+        let moreButton = UIButton()
+        moreButton.titleLabel?.font = .systemFont(ofSize: 14)
+        moreButton.setTitleColor(.systemBlue, for: .normal)
+        moreButton.contentHorizontalAlignment = .right
+        
+        let userDefaultsKey = "isExpanded_\(seriesNumber)"
+        let isExpanded = UserDefaults.standard.bool(forKey: userDefaultsKey)
+        
+        if value.count > 450 {
+            valueLabel.text = isExpanded ? value : "\(value.prefix(450))..."
+            moreButton.setTitle(isExpanded ? "접기" : "더 보기", for: .normal)
+            moreButton.isHidden = false
+        } else {
+            valueLabel.text = value
+            moreButton.isHidden = true
+        }
+        
+        moreButton.addAction(UIAction { [weak valueLabel, weak moreButton] _ in
+            guard let valueLabel = valueLabel, let moreButton = moreButton else { return }
+            var currentExpanded = UserDefaults.standard.bool(forKey: userDefaultsKey)
+            currentExpanded.toggle()
+            valueLabel.text = currentExpanded ? value : "\(value.prefix(450))..."
+            moreButton.setTitle(currentExpanded ? "접기" : "더 보기", for: .normal)
+            UserDefaults.standard.set(currentExpanded, forKey: userDefaultsKey)
+        }, for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
+        let stack = UIStackView(arrangedSubviews: [titleLabel, valueLabel, moreButton])
         stack.axis = .vertical
         stack.spacing = 8
         return stack
