@@ -63,5 +63,24 @@ extension MainContentView {
 
         return displayFormatter.string(from: date)
     }
+    
+    func makeSummaryStack(title: String, value: String, seriesNumber: Int = 0) -> UIStackView {
+        let titleLabel = UILabel()
+        titleLabel.text = title
+        titleLabel.font = .boldSystemFont(ofSize: 18)
+        titleLabel.textColor = .black
+
+        let valueLabel = UILabel()
+        valueLabel.font = .systemFont(ofSize: 14)
+        valueLabel.textColor = .darkGray
+        valueLabel.numberOfLines = 0
+        
+        valueLabel.text = value
+
+        let stack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
+        stack.axis = .vertical
+        stack.spacing = 8
+        return stack
+    }
 }
 

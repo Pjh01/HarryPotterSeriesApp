@@ -33,7 +33,9 @@ class MainContentView: UIView {
         totalStack.arrangedSubviews.forEach { $0.removeFromSuperview() } // 갱신 시 기존 제거
 
         let stacks: [UIStackView] = [
-            makeImageAndInfoStack(book: book, seriesNumber: seriesNumber)
+            makeImageAndInfoStack(book: book, seriesNumber: seriesNumber),
+            makeSummaryStack(title: "Dedication", value: book.dedication),
+            makeSummaryStack(title: "Summary", value: book.summary, seriesNumber: seriesNumber)
         ]
         stacks.forEach { totalStack.addArrangedSubview($0) }
     }
