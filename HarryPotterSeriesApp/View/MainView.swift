@@ -1,13 +1,16 @@
 import UIKit
 import SnapKit
 
-class MainView: UIView {
+class MainView: UIView, MainHeaderViewDelegate {
+    var bookData = [Book]()
+    var selectedSeries = 0
     let headerView = MainHeaderView()
     let contentView = MainContentView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .white
+        headerView.delegate = self  // delegate 연결
         addSubview(headerView)
         addSubview(contentView)
         setupConstraints()
@@ -19,18 +22,23 @@ class MainView: UIView {
     
     private func setupConstraints() {
         headerView.snp.makeConstraints {
-            $0.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+            $0.top.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
         }
         
         contentView.snp.makeConstraints {
             $0.top.equalTo(headerView.snp.bottom).offset(10)
-            $0.leading.trailing.equalTo(safeAreaLayoutGuide).inset(20)
-            $0.bottom.equalTo(safeAreaLayoutGuide).inset(10)
+            $0.leading.trailing.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
     
-    func configure(book: Book, seriesNumber: Int) {
-        headerView.configure(title: book.title, seriesNumber: seriesNumber)
-        contentView.configure(book: book, seriesNumber: seriesNumber)
+    func configure(books: [Book]) {
+        self.bookData = books
+        headerView.configure(books: bookData, selectedSeries: selectedSeries)
+        contentView.configure(book: books[selectedSeries], selectedSeries: selectedSeries)
+    }
+    
+    func didTapSeriesButton(seriesIndex: Int) {
+        selectedSeries = seriesIndex
+        configure(books: bookData)
     }
 }

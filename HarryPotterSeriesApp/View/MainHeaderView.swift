@@ -2,9 +2,15 @@
 import UIKit
 import SnapKit
 
+protocol MainHeaderViewDelegate: AnyObject {
+    func didTapSeriesButton(seriesIndex: Int)
+}
+
 class MainHeaderView: UIView {
+    
+    weak var delegate: MainHeaderViewDelegate?
     let titleLabel = UILabel()
-    let seriesButton = UIButton()
+    let seriesButtonStack = UIStackView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -18,17 +24,16 @@ class MainHeaderView: UIView {
     
     private func setupUI() {
         addSubview(titleLabel)
-        addSubview(seriesButton)
+        addSubview(seriesButtonStack)
 
         titleLabel.font = .boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
-        seriesButton.titleLabel?.font = .systemFont(ofSize: 16)
-        seriesButton.titleLabel?.textAlignment = .center
-        seriesButton.setTitleColor(.white, for: .normal)
-        seriesButton.backgroundColor = .systemBlue
-        seriesButton.layer.cornerRadius = 20
+        seriesButtonStack.axis = .horizontal
+        seriesButtonStack.spacing = 10
+        seriesButtonStack.alignment = .center
+        seriesButtonStack.distribution = .equalCentering
     }
     
     private func setupConstraints() {
@@ -37,17 +42,37 @@ class MainHeaderView: UIView {
             $0.leading.trailing.equalToSuperview().inset(20)
         }
 
-        seriesButton.snp.makeConstraints {
-            //$0.leading.trailing.equalToSuperview().inset(20)
+        seriesButtonStack.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.centerX.equalToSuperview()
-            $0.width.height.equalTo(40)
             $0.bottom.equalToSuperview()
+            $0.centerX.equalToSuperview()
         }
     }
     
-    func configure(title: String, seriesNumber: Int) {
-        titleLabel.text = title
-        seriesButton.setTitle("\(seriesNumber + 1)", for: .normal)
+    func configure(books: [Book], selectedSeries: Int) {
+        titleLabel.text = books[selectedSeries].title
+                
+        seriesButtonStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        for index in 0..<books.count {
+            let seriesButton = UIButton()
+            seriesButton.setTitle("\(index + 1)", for: .normal)
+            seriesButton.titleLabel?.font = .systemFont(ofSize: 16)
+            seriesButton.setTitleColor(selectedSeries == index ? .white : .systemBlue, for: .normal)
+            seriesButton.backgroundColor = selectedSeries == index ? .systemBlue : .systemGray5
+            seriesButton.layer.cornerRadius = 20
+            seriesButton.tag = index
+            seriesButton.addTarget(self, action: #selector(seriesButtonTapped), for: .touchUpInside)
+            
+            seriesButton.snp.makeConstraints {
+                $0.width.height.equalTo(40)
+            }
+            
+            seriesButtonStack.addArrangedSubview(seriesButton)
+        }
+    }
+    
+    @objc func seriesButtonTapped(_ sender: UIButton) {
+        delegate?.didTapSeriesButton(seriesIndex: sender.tag)
     }
 }

@@ -20,17 +20,17 @@ extension MainContentView {
         let infoStack = UIStackView(arrangedSubviews: [
             bookTitleLabel,
             makeSubInfoStack(title: "Author", value: book.author),
-            makeSubInfoStack(title: "Released", value: formattedDate(book.release_date)),
+            makeSubInfoStack(title: "Released", value: formattedDate(book.releaseDate)),
             makeSubInfoStack(title: "Pages", value: "\(book.pages)")
         ])
         infoStack.axis = .vertical
         infoStack.spacing = 8
 
-        let horizontalStack = UIStackView(arrangedSubviews: [imageView, infoStack])
-        horizontalStack.axis = .horizontal
-        horizontalStack.spacing = 15
-        horizontalStack.alignment = .top
-        return horizontalStack
+        let imageAndInfoStack = UIStackView(arrangedSubviews: [imageView, infoStack])
+        imageAndInfoStack.axis = .horizontal
+        imageAndInfoStack.spacing = 16
+        imageAndInfoStack.alignment = .top
+        return imageAndInfoStack
     }
     
     func makeSubInfoStack(title: String, value: String) -> UIStackView {
@@ -45,10 +45,10 @@ extension MainContentView {
         valueLabel.font = .systemFont(ofSize: title == "Author" ? 18 : 14)
         valueLabel.textColor = title == "Author" ? .darkGray : .gray
 
-        let stack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
-        stack.axis = .horizontal
-        stack.spacing = 8
-        return stack
+        let subInfoStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel])
+        subInfoStack.axis = .horizontal
+        subInfoStack.spacing = 8
+        return subInfoStack
     }
     
     func formattedDate(_ dateValue: String) -> String {
@@ -57,11 +57,11 @@ extension MainContentView {
 
         guard let date = formatter.date(from: dateValue) else { return dateValue }
 
-        let displayFormatter = DateFormatter()
-        displayFormatter.dateStyle = .long // "July 2, 1998"
-        displayFormatter.locale = Locale(identifier: "en_US") // 영어 스타일
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMMM d, yyyy" // "July 2, 1998"
+        outputFormatter.locale = Locale(identifier: "en_US") // 영어 스타일
 
-        return displayFormatter.string(from: date)
+        return outputFormatter.string(from: date)
     }
     
     func makeSummaryStack(title: String, value: String, seriesNumber: Int = 0) -> UIStackView {
@@ -101,10 +101,10 @@ extension MainContentView {
             UserDefaults.standard.set(currentExpanded, forKey: userDefaultsKey)
         }, for: .touchUpInside)
 
-        let stack = UIStackView(arrangedSubviews: [titleLabel, valueLabel, moreButton])
-        stack.axis = .vertical
-        stack.spacing = 8
-        return stack
+        let summaryStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel, moreButton])
+        summaryStack.axis = .vertical
+        summaryStack.spacing = 8
+        return summaryStack
     }
     
     func makeChapterStack(title: String, value: [Chapter]) -> UIStackView {
@@ -122,14 +122,10 @@ extension MainContentView {
             return label
         }
 
-        let chapterStack = UIStackView(arrangedSubviews: chapterLabels)
+        let chapterStack = UIStackView(arrangedSubviews: [titleLabel] + chapterLabels)
         chapterStack.axis = .vertical
         chapterStack.spacing = 8
-
-        let stack = UIStackView(arrangedSubviews: [titleLabel, chapterStack])
-        stack.axis = .vertical
-        stack.spacing = 8
-        return stack
+        return chapterStack
     }
 }
 

@@ -1,4 +1,4 @@
-//
+//하단 책 내용 scrollView
 import UIKit
 import SnapKit
 
@@ -32,18 +32,18 @@ class MainContentView: UIView {
         }
         
         totalStack.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.width.equalToSuperview()
+            $0.top.bottom.equalTo(scrollView.contentLayoutGuide)
+            $0.leading.trailing.equalTo(scrollView.frameLayoutGuide).inset(20)
         }
     }
     
-    func configure(book: Book, seriesNumber: Int) {
+    func configure(book: Book, selectedSeries: Int) {
         totalStack.arrangedSubviews.forEach { $0.removeFromSuperview() } // 갱신 시 기존 제거
 
         let stacks: [UIStackView] = [
-            makeImageAndInfoStack(book: book, seriesNumber: seriesNumber),
+            makeImageAndInfoStack(book: book, seriesNumber: selectedSeries),
             makeSummaryStack(title: "Dedication", value: book.dedication),
-            makeSummaryStack(title: "Summary", value: book.summary, seriesNumber: seriesNumber),
+            makeSummaryStack(title: "Summary", value: book.summary, seriesNumber: selectedSeries),
             makeChapterStack(title: "Chapter", value: book.chapters)
         ]
         stacks.forEach { totalStack.addArrangedSubview($0) }
