@@ -33,12 +33,12 @@ class MainViewController: UIViewController, MainHeaderViewDelegate {
         }
         
         contentView.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom).offset(10)
+            $0.top.equalTo(headerView.snp.bottom).offset(15)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
-    func loadBooks() {
+    private func loadBooks() {
         dataService.loadBooks { [weak self] result in
             guard let self = self else { return }
             
@@ -57,11 +57,11 @@ class MainViewController: UIViewController, MainHeaderViewDelegate {
     }
     
     private func updateContent() {
-        headerView.configure(books: bookData, selectedSeries: selectedSeries)
+        headerView.configure(title: bookData[selectedSeries].title)
         contentView.configure(book: bookData[selectedSeries], selectedSeries: selectedSeries)
     }
     
-    func handleError(_ error: Error) {
+    private func handleError(_ error: Error) {
         let alert = UIAlertController(title: "데이터 로딩 실패", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(.init(title: "확인", style: .default))
         present(alert, animated: true)

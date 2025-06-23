@@ -35,16 +35,31 @@ class MainHeaderView: UIView {
         seriesButtonStack.alignment = .center
         seriesButtonStack.distribution = .equalCentering
         
-        for index in 0..<7 {
-            let seriesButton = UIButton()
-            seriesButton.setTitle("\(index + 1)", for: .normal)
-            seriesButton.titleLabel?.font = .systemFont(ofSize: 16)
-            seriesButton.layer.cornerRadius = 20
+        for index in 0...6 {
+            var config = UIButton.Configuration.filled()
+            config.title = "\(index + 1)"
+            config.titleAlignment = .center
+            config.cornerStyle = .capsule
+            config.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
+            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { attributes in
+                var newAttributes = attributes
+                newAttributes.font = .systemFont(ofSize: 16)
+                return newAttributes
+            }
+            
+            let seriesButton = UIButton(configuration: config)
             seriesButton.tag = index
+            seriesButton.isSelected = (index == 0)
+            seriesButton.configurationUpdateHandler = { button in
+                var updatedConfig = button.configuration
+                updatedConfig?.baseBackgroundColor = button.isSelected ? .systemBlue : .systemGray5
+                updatedConfig?.baseForegroundColor = button.isSelected ? .white : .systemBlue
+                button.configuration = updatedConfig
+            }
             seriesButton.addTarget(self, action: #selector(seriesButtonTapped), for: .touchUpInside)
             
             seriesButton.snp.makeConstraints {
-                $0.width.height.equalTo(40)
+                $0.height.equalTo(seriesButton.snp.width)
             }
             
             seriesButtonStack.addArrangedSubview(seriesButton)
@@ -64,16 +79,14 @@ class MainHeaderView: UIView {
         }
     }
     
-    func configure(books: [Book], selectedSeries: Int) {
-        titleLabel.text = books[selectedSeries].title
-                        
-        for (index, seriesButton) in seriesButtonStack.arrangedSubviews.compactMap({$0 as? UIButton}).enumerated() {
-            seriesButton.setTitleColor(selectedSeries == index ? .white : .systemBlue, for: .normal)
-            seriesButton.backgroundColor = selectedSeries == index ? .systemBlue : .systemGray5
-        }
+    func configure(title: String) {
+        titleLabel.text = title
     }
     
     @objc func seriesButtonTapped(_ sender: UIButton) {
+        for seriesButton in seriesButtonStack.arrangedSubviews.compactMap({$0 as? UIButton}) {
+            seriesButton.isSelected = (seriesButton == sender)
+        }
         delegate?.didTapSeriesButton(seriesIndex: sender.tag)
     }
 }
