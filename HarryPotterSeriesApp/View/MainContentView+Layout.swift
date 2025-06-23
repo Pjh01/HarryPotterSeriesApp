@@ -1,47 +1,41 @@
 import UIKit
 
 extension MainContentView {
-    func makeImageAndInfoStack(book: Book, seriesNumber: Int) -> UIStackView {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "harrypotter\(seriesNumber + 1)")
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true  // 넘치는 이미지 잘라냄
-        imageView.snp.makeConstraints {
+    func makeImageAndInfoStack() -> UIStackView {
+        bookImageView.contentMode = .scaleAspectFill
+        bookImageView.clipsToBounds = true  // 넘치는 이미지 잘라냄
+        bookImageView.snp.makeConstraints {
             $0.width.equalTo(100)
-            $0.height.equalTo(imageView.snp.width).multipliedBy(1.5)
+            $0.height.equalTo(bookImageView.snp.width).multipliedBy(1.5)
         }
 
-        let bookTitleLabel = UILabel()
-        bookTitleLabel.text = book.title
         bookTitleLabel.font = .boldSystemFont(ofSize: 20)
         bookTitleLabel.textColor = .black
         bookTitleLabel.numberOfLines = 0
 
         let infoStack = UIStackView(arrangedSubviews: [
             bookTitleLabel,
-            makeSubInfoStack(title: "Author", value: book.author),
-            makeSubInfoStack(title: "Released", value: formattedDate(book.releaseDate)),
-            makeSubInfoStack(title: "Pages", value: "\(book.pages)")
+            makeSubInfoStack(title: "Author", valueLabel: authorValueLabel),
+            makeSubInfoStack(title: "Released", valueLabel: releasedValueLabel),
+            makeSubInfoStack(title: "Pages", valueLabel: pagesValueLabel)
         ])
         infoStack.axis = .vertical
         infoStack.spacing = 8
 
-        let imageAndInfoStack = UIStackView(arrangedSubviews: [imageView, infoStack])
+        let imageAndInfoStack = UIStackView(arrangedSubviews: [bookImageView, infoStack])
         imageAndInfoStack.axis = .horizontal
         imageAndInfoStack.spacing = 16
         imageAndInfoStack.alignment = .top
         return imageAndInfoStack
     }
     
-    func makeSubInfoStack(title: String, value: String) -> UIStackView {
+    func makeSubInfoStack(title: String, valueLabel: UILabel) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = .boldSystemFont(ofSize: title == "Author" ? 16 : 14)
         titleLabel.textColor = .black
         titleLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
 
-        let valueLabel = UILabel()
-        valueLabel.text = value
         valueLabel.font = .systemFont(ofSize: title == "Author" ? 18 : 14)
         valueLabel.textColor = title == "Author" ? .darkGray : .gray
 
@@ -64,65 +58,32 @@ extension MainContentView {
         return outputFormatter.string(from: date)
     }
     
-    func makeSummaryStack(title: String, value: String, seriesNumber: Int = 0) -> UIStackView {
+    func makeSummaryStack(title: String, valueLabel: UILabel) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title
         titleLabel.font = .boldSystemFont(ofSize: 18)
         titleLabel.textColor = .black
 
-        let valueLabel = UILabel()
         valueLabel.font = .systemFont(ofSize: 14)
         valueLabel.textColor = .darkGray
         valueLabel.numberOfLines = 0
-        
-        let moreButton = UIButton()
-        moreButton.titleLabel?.font = .systemFont(ofSize: 14)
-        moreButton.setTitleColor(.systemBlue, for: .normal)
-        moreButton.contentHorizontalAlignment = .right
-        
-        let userDefaultsKey = "isExpanded_\(seriesNumber)"
-        let isExpanded = UserDefaults.standard.bool(forKey: userDefaultsKey)
-        
-        if value.count > 450 {
-            valueLabel.text = isExpanded ? value : "\(value.prefix(450))..."
-            moreButton.setTitle(isExpanded ? "접기" : "더 보기", for: .normal)
-            moreButton.isHidden = false
-        } else {
-            valueLabel.text = value
-            moreButton.isHidden = true
-        }
-        
-        moreButton.addAction(UIAction { [weak valueLabel, weak moreButton] _ in
-            guard let valueLabel = valueLabel, let moreButton = moreButton else { return }
-            var currentExpanded = UserDefaults.standard.bool(forKey: userDefaultsKey)
-            currentExpanded.toggle()
-            valueLabel.text = currentExpanded ? value : "\(value.prefix(450))..."
-            moreButton.setTitle(currentExpanded ? "접기" : "더 보기", for: .normal)
-            UserDefaults.standard.set(currentExpanded, forKey: userDefaultsKey)
-        }, for: .touchUpInside)
 
-        let summaryStack = UIStackView(arrangedSubviews: [titleLabel, valueLabel, moreButton])
+        let summaryStack = UIStackView(arrangedSubviews: title == "Summary" ? [titleLabel, valueLabel, summaryMoreButton] : [titleLabel, valueLabel])
         summaryStack.axis = .vertical
         summaryStack.spacing = 8
         return summaryStack
     }
     
-    func makeChapterStack(title: String, value: [Chapter]) -> UIStackView {
+    func makeChapterStack() -> UIStackView {
         let titleLabel = UILabel()
-        titleLabel.text = title
+        titleLabel.text = "Chapter"
         titleLabel.font = .boldSystemFont(ofSize: 18)
         titleLabel.textColor = .black
+        
+        chapterValueStack.axis = .vertical
+        chapterValueStack.spacing = 8
 
-        let chapterLabels = value.map { chapter -> UILabel in
-            let label = UILabel()
-            label.text = chapter.title
-            label.font = .systemFont(ofSize: 14)
-            label.textColor = .darkGray
-            label.numberOfLines = 0
-            return label
-        }
-
-        let chapterStack = UIStackView(arrangedSubviews: [titleLabel] + chapterLabels)
+        let chapterStack = UIStackView(arrangedSubviews: [titleLabel, chapterValueStack])
         chapterStack.axis = .vertical
         chapterStack.spacing = 8
         return chapterStack

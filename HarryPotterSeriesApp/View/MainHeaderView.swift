@@ -34,6 +34,21 @@ class MainHeaderView: UIView {
         seriesButtonStack.spacing = 10
         seriesButtonStack.alignment = .center
         seriesButtonStack.distribution = .equalCentering
+        
+        for index in 0..<7 {
+            let seriesButton = UIButton()
+            seriesButton.setTitle("\(index + 1)", for: .normal)
+            seriesButton.titleLabel?.font = .systemFont(ofSize: 16)
+            seriesButton.layer.cornerRadius = 20
+            seriesButton.tag = index
+            seriesButton.addTarget(self, action: #selector(seriesButtonTapped), for: .touchUpInside)
+            
+            seriesButton.snp.makeConstraints {
+                $0.width.height.equalTo(40)
+            }
+            
+            seriesButtonStack.addArrangedSubview(seriesButton)
+        }
     }
     
     private func setupConstraints() {
@@ -51,24 +66,10 @@ class MainHeaderView: UIView {
     
     func configure(books: [Book], selectedSeries: Int) {
         titleLabel.text = books[selectedSeries].title
-                
-        seriesButtonStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        
-        for index in 0..<books.count {
-            let seriesButton = UIButton()
-            seriesButton.setTitle("\(index + 1)", for: .normal)
-            seriesButton.titleLabel?.font = .systemFont(ofSize: 16)
+                        
+        for (index, seriesButton) in seriesButtonStack.arrangedSubviews.compactMap({$0 as? UIButton}).enumerated() {
             seriesButton.setTitleColor(selectedSeries == index ? .white : .systemBlue, for: .normal)
             seriesButton.backgroundColor = selectedSeries == index ? .systemBlue : .systemGray5
-            seriesButton.layer.cornerRadius = 20
-            seriesButton.tag = index
-            seriesButton.addTarget(self, action: #selector(seriesButtonTapped), for: .touchUpInside)
-            
-            seriesButton.snp.makeConstraints {
-                $0.width.height.equalTo(40)
-            }
-            
-            seriesButtonStack.addArrangedSubview(seriesButton)
         }
     }
     

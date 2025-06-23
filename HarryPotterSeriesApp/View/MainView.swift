@@ -9,7 +9,7 @@ class MainView: UIView, MainHeaderViewDelegate {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .systemBackground
         headerView.delegate = self  // delegate 연결
         addSubview(headerView)
         addSubview(contentView)
