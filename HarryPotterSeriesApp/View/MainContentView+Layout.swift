@@ -45,19 +45,6 @@ extension MainContentView {
         return subInfoStack
     }
     
-    func formattedDate(_ dateValue: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd" // JSON의 날짜 포맷
-
-        guard let date = formatter.date(from: dateValue) else { return dateValue }
-
-        let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "MMMM d, yyyy" // "July 2, 1998"
-        outputFormatter.locale = Locale(identifier: "en_US") // 영어 스타일
-
-        return outputFormatter.string(from: date)
-    }
-    
     func makeSummaryStack(title: String, valueLabel: UILabel) -> UIStackView {
         let titleLabel = UILabel()
         titleLabel.text = title

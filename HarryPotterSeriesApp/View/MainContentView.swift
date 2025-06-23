@@ -63,7 +63,7 @@ class MainContentView: UIView {
         bookImageView.image = UIImage(named: "harrypotter\(selectedSeries + 1)")
         bookTitleLabel.text = book.title
         authorValueLabel.text = book.author
-        releasedValueLabel.text = formattedDate(book.releaseDate)
+        releasedValueLabel.text = "\(book.releaseDate, format: .long, locale: Locale(identifier: "en_US"))"
         pagesValueLabel.text = "\(book.pages)"
         dedicationValueLabel.text = book.dedication
         configureSummary(value: book.summary, selectedSeries: selectedSeries)
@@ -100,5 +100,14 @@ class MainContentView: UIView {
             UserDefaults.standard.set(toggled, forKey: key)
             self.configureSummary(value: value, selectedSeries: selectedSeries)  // 상태 토글 후 다시 값 설정. configureSummary() 재호출로 간결화
         }, for: .touchUpInside)
+    }
+}
+
+extension String.StringInterpolation {
+    mutating func appendInterpolation(_ date: Date, format: DateFormatter.Style = .long, locale: Locale = .current) {
+        let formatter = DateFormatter()
+        formatter.dateStyle = format
+        formatter.locale = locale
+        appendLiteral(formatter.string(from: date))
     }
 }

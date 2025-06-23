@@ -14,9 +14,16 @@ class DataService {
             return
         }
         
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted({
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter
+        }())
+        
         do {
             let data = try Data(contentsOf: URL(fileURLWithPath: path))
-            let bookResponse = try JSONDecoder().decode(BookResponse.self, from: data)
+            let bookResponse = try decoder.decode(BookResponse.self, from: data)
             let books = bookResponse.data.map { $0.attributes }
             completion(.success(books))
         } catch {

@@ -1,3 +1,5 @@
+import Foundation
+
 struct BookResponse: Decodable {
     let data: [BookContainer]
 }
@@ -10,7 +12,7 @@ struct Book: Decodable {
     let title: String
     let author: String
     let pages: Int
-    let releaseDate: String
+    let releaseDate: Date
     let dedication: String
     let summary: String
     let wiki: String
