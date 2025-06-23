@@ -33,18 +33,7 @@ class MainViewController: UIViewController {
     }
     
     func handleError(_ error: Error) {
-        let message: String
-        
-        switch error {
-        case DataError.fileNotFound:
-            message = "데이터 파일을 찾을 수 없습니다."
-        case DataError.parsingFailed:
-            message = "데이터를 불러오는 데 실패했습니다."
-        default:
-            message = error.localizedDescription
-        }
-        
-        let alert = UIAlertController(title: "데이터 로딩 실패", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: "데이터 로딩 실패", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(.init(title: "확인", style: .default))
         present(alert, animated: true)
     }
