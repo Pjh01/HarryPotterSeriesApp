@@ -2,13 +2,14 @@
 import UIKit
 import SnapKit
 
+// 델리게이트 프로토콜 정의
 protocol MainHeaderViewDelegate: AnyObject {
     func didTapSeriesButton(seriesIndex: Int)
 }
 
 class MainHeaderView: UIView {
     
-    weak var delegate: MainHeaderViewDelegate?
+    weak var delegate: MainHeaderViewDelegate?  // 버튼 클릭을 위임받을 객체
     let titleLabel = UILabel()
     let seriesButtonStack = UIStackView()
 
@@ -22,19 +23,23 @@ class MainHeaderView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - UI 구성
     private func setupUI() {
         addSubview(titleLabel)
         addSubview(seriesButtonStack)
 
+        // 제목 설정
         titleLabel.font = .boldSystemFont(ofSize: 24)
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
+        // 버튼 스택 설정
         seriesButtonStack.axis = .horizontal
         seriesButtonStack.spacing = 10
         seriesButtonStack.alignment = .center
         seriesButtonStack.distribution = .equalCentering
         
+        // 총 7개의 시리즈 버튼 생성
         for index in 0...6 {
             var config = UIButton.Configuration.filled()
             config.title = "\(index + 1)"
@@ -48,8 +53,10 @@ class MainHeaderView: UIView {
             }
             
             let seriesButton = UIButton(configuration: config)
-            seriesButton.tag = index
-            seriesButton.isSelected = (index == 0)
+            seriesButton.tag = index        // 버튼에 tag를 지정. 인덱스 쉽게 구분 가능
+            seriesButton.isSelected = (index == 0)  // 기본값. 첫 번째 버튼만 선택 상태
+            
+            // 버튼의 isSelected 값에 따라 배경 및 텍스트 색상 자동 업데이트
             seriesButton.configurationUpdateHandler = { button in
                 var updatedConfig = button.configuration
                 updatedConfig?.baseBackgroundColor = button.isSelected ? .systemBlue : .systemGray5
@@ -59,13 +66,14 @@ class MainHeaderView: UIView {
             seriesButton.addTarget(self, action: #selector(seriesButtonTapped), for: .touchUpInside)
             
             seriesButton.snp.makeConstraints {
-                $0.height.equalTo(seriesButton.snp.width)
+                $0.width.equalTo(seriesButton.snp.height)
             }
             
             seriesButtonStack.addArrangedSubview(seriesButton)
         }
     }
     
+    // MARK: - 오토레이아웃 설정
     private func setupConstraints() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
@@ -83,6 +91,7 @@ class MainHeaderView: UIView {
         titleLabel.text = title
     }
     
+    // 버튼 클릭 시 선택 상태 갱신 및 델리게이트 호출
     @objc func seriesButtonTapped(_ sender: UIButton) {
         for seriesButton in seriesButtonStack.arrangedSubviews.compactMap({$0 as? UIButton}) {
             seriesButton.isSelected = (seriesButton == sender)
